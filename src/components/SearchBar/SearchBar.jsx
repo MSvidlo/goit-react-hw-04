@@ -1,20 +1,41 @@
-const SearchBar = ({onSearch}) => {
-    const handleSubmit = e => {
-        e.preventDefault();
-        onSearch(e.target.elements.query.value);
-        e.target.reset();
+import { Field, Form, Formik } from 'formik';
+import toast, { Toaster } from 'react-hot-toast';
+import css from './SearchBar.module.css';
+
+const SearchBar = ({ onFormSubmit }) => {
+      const notify = () => toast('Please type a desired word.');
+
+  function handleSubmit(values, actions) {
+    if (values.searchedText.trim() !== '') {
+      onFormSubmit(values.searchedText);
+      actions.resetForm();
+    } else {
+      notify();
     }
-    return(
-  <form onSubmit={handleSubmit}>
-    <input
-                type="text"
-                name="query"
-    //   autoComplete="off"
-    //   autoFocus
-      placeholder="Search images and photos"
-    />
-    <button type="submit">Search</button>
-  </form>
-) };
+  }
+
+  return (
+    <header className={css.header}>
+      <Formik initialValues={{ searchedText: '' }} onSubmit={handleSubmit}>
+        <Form className={css.form}>
+          <div className={css.fieldWrapper}>
+           
+            <Field
+              className={css.input}
+              name="searchedText"
+              type="text"
+              autoComplete="off"
+              autoFocus
+              placeholder="Search images and photos"
+                      />
+                       <button className={css.button} type="submit">Search
+            </button>
+          </div>
+        </Form>
+      </Formik>
+      <Toaster position="top.right" />
+    </header>
+  );
+}
 
 export default SearchBar
