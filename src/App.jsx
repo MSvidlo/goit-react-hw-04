@@ -8,11 +8,20 @@ import * as Yup from "yup";
 import { Formik, Form, Field  } from 'formik';
 import SearchBar from './components/SearchBar/SearchBar';
 import fetchPhotos from './fetchPhotos';
+import ImageGallery from './components/ImageGallery/ImageGallery';
+import ImageModal from './components/ImageModal/ImageModal';
+import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
+import ErrorMessage from './ErrorMassage/ErrorMessage';
 
 const App = () => {
    const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalFilter, setModalFilter] = useState();
+  const [contentForModal] = photos.filter(photo => photo.id === modalFilter);
   useEffect(() => {
     async function searchPictures() {
       if (query === '') {
@@ -37,10 +46,41 @@ function onFormSubmit(searchedWord) {
     setPage(1);
   }
   
+  function handleLoadMoreBtnClick() {
+    setPage(prevState => prevState + 1);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function createModalContent(id) {
+    setModalFilter(id);
+  }
   return (
-    <div>
+    <>
       <SearchBar onFormSubmit={onFormSubmit}/>
-    </div>
+      <main>
+        <ImageGallery
+          modalContent={createModalContent}
+          openModal={openModal}
+          photos={photos}
+        />
+        {error && <ErrorMessage />}
+        {loading && <Loader />}
+        {photos.length > 0 && !loading && (
+          <LoadMoreBtn handleLoadMoreBtnClick={handleLoadMoreBtnClick} />
+        )}
+        <ImageModal
+          modalContent={contentForModal}
+          isOpen={modalIsOpen}
+          closeModal={closeModal}
+        />
+      </main>  </>
   )
 };
 
