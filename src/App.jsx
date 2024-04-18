@@ -12,6 +12,7 @@ import ImageGallery from './components/ImageGallery/ImageGallery';
 import ImageModal from './components/ImageModal/ImageModal';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import ErrorMessage from './ErrorMassage/ErrorMessage';
+import Loader from './components/Loader/Loader';
 
 const App = () => {
    const [page, setPage] = useState(1);
@@ -27,13 +28,16 @@ const App = () => {
       if (query === '') {
         return;
       }
-    
+     setLoading(true); 
       try {
         const apiRequest = await fetchPhotos(query, page);
         setPhotos(prevState => [...prevState, ...apiRequest]);
       }
-      catch (error) { };
-        
+      catch (error) {
+        setLoading(false);
+        setError(true)
+      };
+        setLoading(false);
     }
      searchPictures();
   }, [query, page]);
@@ -48,6 +52,7 @@ function onFormSubmit(searchedWord) {
   
   function handleLoadMoreBtnClick() {
     setPage(prevState => prevState + 1);
+    setLoading(true);
   }
 
   function openModal() {
