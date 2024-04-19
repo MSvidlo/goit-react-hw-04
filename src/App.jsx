@@ -32,12 +32,16 @@ const App = () => {
       try {
         const apiRequest = await fetchPhotos(query, page);
         setPhotos(prevState => [...prevState, ...apiRequest]);
+        setError(false); 
       }
       catch (error) {
         setLoading(false);
         setError(true)
-      };
-        setLoading(false);
+      }
+      finally {
+      setLoading(false);
+    }
+      
     }
      searchPictures();
   }, [query, page]);
